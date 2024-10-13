@@ -1,79 +1,53 @@
-// Global score variables
 let humanScore = 0;
 let computerScore = 0;
 
 function getComputerChoice() {
-    const randomNumber = Math.random(); // Generate a random number between 0 and 1
+    const choices = ["rock", "paper", "scissors"];
+    const randomIndex = Math.floor(Math.random() * 3);
+    return choices[randomIndex];
+}
 
-    // Determine the choice based on the random number
-    if (randomNumber < 0.33) {
-        return "rock";
-    } else if (randomNumber < 0.66) {
-        return "paper";
+function playRound(humanChoice, computerChoice) {
+    humanChoice = humanChoice.toLowerCase();
+    let result = "";
+
+    if (humanChoice === computerChoice) {
+        result = `It's a tie! Both chose ${humanChoice}.`;
+    } else if (
+        (humanChoice === "rock" && computerChoice === "scissors") ||
+        (humanChoice === "scissors" && computerChoice === "paper") ||
+        (humanChoice === "paper" && computerChoice === "rock")
+    ) {
+        humanScore++;
+        result = `You win! ${humanChoice} beats ${computerChoice}.`;
     } else {
-        return "scissors";
+        computerScore++;
+        result = `You lose! ${computerChoice} beats ${humanChoice}.`;
     }
-}
-function getHumanChoice() {
-    let choice = prompt("Please enter rock, paper, or scissors:").toLowerCase(); // Get the user input and convert it to lowercase
-    
-    // Ensure the input is one of the valid choices
-    while (!['rock', 'paper', 'scissors'].includes(choice)) {
-        choice = prompt("Invalid choice. Please enter rock, paper, or scissors:").toLowerCase();
-    }
-    
-    return choice; // Return the valid user input
+
+    document.getElementById("result").textContent = result;
+    updateScore();
 }
 
-function playGame() {
-    // Global score variables
-    let humanScore = 0;
-    let computerScore = 0;
-
-    // Function to play a single round
-    function playRound(humanChoice, computerChoice) {
-        // Make humanChoice case-insensitive
-        humanChoice = humanChoice.toLowerCase();
-
-        // Check for a tie
-        if (humanChoice === computerChoice) {
-            console.log(`It's a tie! Both chose ${humanChoice}`);
-            return;
-        }
-
-        // Determine the round winner
-        if (
-            (humanChoice === 'rock' && computerChoice === 'scissors') ||
-            (humanChoice === 'scissors' && computerChoice === 'paper') ||
-            (humanChoice === 'paper' && computerChoice === 'rock')
-        ) {
-            console.log(`You win! ${humanChoice} beats ${computerChoice}`);
-            humanScore += 1;  // Increment human score
-        } else {
-            console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
-            computerScore += 1;  // Increment computer score
-        }
-
-        // Log the updated scores
-        console.log(`Scores -> Human: ${humanScore}, Computer: ${computerScore}`);
-    }
-
-    // Play 5 rounds
-    for (let i = 0; i < 5; i++) {
-        console.log(`Round ${i + 1}:`);
-        const humanSelection = getHumanChoice();
-        const computerSelection = getComputerChoice();
-        playRound(humanSelection, computerSelection);
-    }
-
-    // Declare the overall winner
-    if (humanScore > computerScore) {
-        console.log(`You win the game! Final Score -> Human: ${humanScore}, Computer: ${computerScore}`);
-    } else if (computerScore > humanScore) {
-        console.log(`You lose the game! Final Score -> Human: ${humanScore}, Computer: ${computerScore}`);
-    } else {
-        console.log(`The game is a tie! Final Score -> Human: ${humanScore}, Computer: ${computerScore}`);
+function updateScore() {
+    document.getElementById("result").textContent += ` Scores: You - ${humanScore}, Computer - ${computerScore}`;
+    if (humanScore === 5) {
+        document.getElementById("result").textContent += " You won the game!";
+        resetGame();
+    } else if (computerScore === 5) {
+        document.getElementById("result").textContent += " Computer won the game!";
+        resetGame();
     }
 }
-playGame()
 
+function resetGame() {
+    humanScore = 0;
+    computerScore = 0;
+    setTimeout(() => {
+        document.getElementById("result").textContent = "Choose your move!";
+    }, 3000);
+}
+
+document.getElementById("rock").addEventListener("click", () => playRound("rock", getComputerChoice()));
+document.getElementById("paper").addEventListener("click", () => playRound("paper", getComputerChoice()));
+document.getElementById("scissors").addEventListener("click", () => playRound("scissors", getComputerChoice()));
